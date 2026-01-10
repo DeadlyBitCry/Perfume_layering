@@ -6,22 +6,29 @@ from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
-
+from dotenv import load_dotenv
+import os
 import pandas as pd
 
-# Твой токен
-TOKEN = "7813306753:AAEozSfa8k1XDjXJGWlwcBFMF5fItn86NhI"
+load_dotenv()  # загружает .env
+TOKEN = os.getenv("BOT_TOKEN")
+
+if not TOKEN:
+    raise ValueError("Токен бота не найден! Добавь BOT_TOKEN в .env файл")
 
 # Загрузка базы
 def load_base():
+    df = pd.DataFrame()  # дефолт на пустой
     try:
         df = pd.read_csv("fra_perfumes.csv", encoding='utf-8')
         print(f"Загружена большая база: {len(df)} ароматов")
+        print("Колонки в базе:", df.columns.tolist())  # отладка здесь безопасна
         return df
     except FileNotFoundError:
         try:
             df = pd.read_csv("perfume_base(2).csv", encoding='utf-8')
             print(f"Загружена маленькая база: {len(df)} ароматов")
+            print("Колонки в базе:", df.columns.tolist())
             return df
         except:
             print("База не найдена!")
@@ -30,6 +37,11 @@ def load_base():
 df = load_base()
 if df.empty:
     raise Exception("Не удалось загрузить базу")
+
+def get_perfume_id(row):
+    brand = get_brand(row)
+    name = get_name(row)
+    return f"{brand} - {name}".lower().strip()
 
 # Универсальные функции
 def get_brand(row):
@@ -45,20 +57,32 @@ def get_name(row):
 
 # Поиск (универсальный для большой базы)
 def search_perfumes(query: str):
-    if df.empty or not query:
+    if df.empty or not query.strip():
         return pd.DataFrame()
 
     query = query.lower().strip()
+
     mask = pd.Series([False] * len(df))
 
-    for col in df.columns:
-        col_lower = col.lower()
-        if any(k in col_lower for k in ["name", "title", "perfume", "fragrance"]):
-            mask = mask | df[col].astype(str).str.lower().str.contains(query, na=False)
-        if any(k in col_lower for k in ["accord", "note", "description"]):
-            mask = mask | df[col].astype(str).str.lower().str.contains(query, na=False)
+    # Точная колонка "Name" — начало или любое место
+    if "Name" in df.columns:
+        mask = mask | df["Name"].astype(str).str.lower().str.contains(query, na=False)
 
-    return df[mask].head(10).reset_index(drop=True)
+    # Main Accords — аккорды
+    if "Main Accords" in df.columns:
+        mask = mask | df["Main Accords"].astype(str).str.lower().str.contains(query, na=False)
+
+    # Perfumers — парфюмеры (часто бренды)
+    if "Perfumers" in df.columns:
+        mask = mask | df["Perfumers"].astype(str).str.lower().str.contains(query, na=False)
+
+    # Description — дополнительно
+    if "Description" in df.columns:
+        mask = mask | df["Description"].astype(str).str.lower().str.contains(query, na=False)
+
+    results = df[mask].head(10).reset_index(drop=True)
+    print(f"Запрос '{query}': найдено {len(results)} ароматов")  # отладка
+    return results
 
 # Пресеты (твой полный словарь — вставь все 5 миксов)
 PRESETS = {
@@ -228,78 +252,95 @@ async def cmd_search(callback: types.CallbackQuery, state: FSMContext):
 
 @dp.message(LayeringStates.waiting_for_perfumes)
 async def process_search(message: Message, state: FSMContext):
-    query = message.text.strip()
-    if not query:
-        await message.answer("Запрос пустой — попробуй ещё раз или вернись в меню:", reply_markup=main_keyboard())
-        await state.clear()
-        return
-
-    results = search_perfumes(query)
-    
-    if results.empty:
-        await message.answer("Ничего не найдено 😔\nПопробуй другой запрос или вернись в меню:", reply_markup=main_keyboard())
-        await state.clear()
-        return
-
     data = await state.get_data()
-    selected_indices = data.get("selected_indices", [])
+    query = message.text.strip() if message.text else None
+
+    selected_perfume_ids = data.get("selected_perfume_ids", [])
+
+    if query:  # Новый поиск
+        results = search_perfumes(query)
+        if results.empty:
+            await message.answer("Ничего не найдено 😔\nПопробуй другой запрос:", reply_markup=main_keyboard())
+            return
+
+        current_result_indices = results.index.tolist()
+        current_results = results.to_dict('records')
+        await state.update_data(
+            current_result_indices=current_result_indices,
+            current_results=current_results,
+            selected_perfume_ids=selected_perfume_ids  # Сохраняем прошлые выборы
+        )
+    else:  # Обновление списка
+        current_results = data.get("current_results", [])
+        current_result_indices = data.get("current_result_indices", [])
+        if not current_results:
+            await message.answer("Сессия устарела — начни заново:", reply_markup=main_keyboard())
+            await state.clear()
+            return
+
+        results = pd.DataFrame(current_results)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[])
 
-    result_indices = results.index.tolist()
-
-    for i, local_idx in enumerate(result_indices):
-        row = df.loc[local_idx]
+    for i in range(len(results)):
+        row = results.iloc[i]
         name = get_name(row)
         brand = get_brand(row)
-        status = " ✅" if local_idx in selected_indices else ""
+        perfume_id = get_perfume_id(row)
+        status = " ✅" if perfume_id in selected_perfume_ids else ""
         text = f"{brand} - {name}{status}"
         kb.inline_keyboard.append([InlineKeyboardButton(text=text, callback_data=f"select_{i}")])
 
     kb.inline_keyboard.append([InlineKeyboardButton(text="✅ Готово — анализ", callback_data="analyze")])
+    kb.inline_keyboard.append([InlineKeyboardButton(text="🔍 Новый поиск", callback_data="new_search")])
     kb.inline_keyboard.append([InlineKeyboardButton(text="← Отмена", callback_data="back_main")])
 
-    await message.answer(
-        f"Найдено {len(results)} ароматов. Выбрано: {len(selected_indices)}/3\nВыбери ароматы:",
-        reply_markup=kb
-    )
-    await state.update_data(result_indices=result_indices)
+    text = f"Найдено {len(results)} ароматов. Выбрано: {len(selected_perfume_ids)}/3\nВыбери ароматы:"
+    await message.answer(text, reply_markup=kb)
 
 @dp.callback_query(F.data.startswith("select_"))
 async def select_perfume(callback: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    result_indices = data.get("result_indices", [])
-    selected_indices = data.get("selected_indices", [])
+    current_result_indices = data.get("current_result_indices", [])
+    selected_perfume_ids = data.get("selected_perfume_ids", [])
 
     local_idx = int(callback.data.split("_")[1])
-    global_idx = result_indices[local_idx]
+    row = df.loc[current_result_indices[local_idx]]
+    perfume_id = get_perfume_id(row)
 
-    if global_idx in selected_indices:
+    if perfume_id in selected_perfume_ids:
         await callback.answer("Уже выбран!", show_alert=True)
         return
 
-    if len(selected_indices) >= 3:
+    if len(selected_perfume_ids) >= 3:
         await callback.answer("Максимум 3 аромата!", show_alert=True)
         return
 
-    selected_indices.append(global_idx)
-    await state.update_data(selected_indices=selected_indices)
+    selected_perfume_ids.append(perfume_id)
+    await state.update_data(selected_perfume_ids=selected_perfume_ids)
 
-    await callback.answer(f"Добавлено: {get_brand(df.loc[global_idx])} - {get_name(df.loc[global_idx])}")
+    await callback.answer(f"Добавлено: {get_brand(row)} - {get_name(row)}")
 
+    # Обновляем список из сохранённых результатов
     await process_search(callback.message, state)
 
 @dp.callback_query(F.data == "analyze")
 async def do_analysis(callback: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    selected_indices = data.get("selected_indices", [])
+    selected_perfume_ids = data.get("selected_perfume_ids", [])
 
-    if len(selected_indices) < 2:
-        await callback.message.answer("Нужно выбрать минимум 2 аромата!", reply_markup=main_keyboard())
+    if len(selected_perfume_ids) < 2:
+        await callback.message.answer("Нужно минимум 2 аромата!", reply_markup=main_keyboard())
         await state.clear()
         return
 
-    perfumes = [df.loc[idx] for idx in selected_indices]
+    # Находим строки по ID
+    perfumes = []
+    for pid in selected_perfume_ids:
+        mask = (df["brand"].str.lower() + " - " + df["name"].str.lower()).str.strip() == pid
+        if mask.any():
+            perfumes.append(df[mask].iloc[0])
+
     analysis = analyze_layering(perfumes)
 
     text = "🎭 **Твой лееринг готов!**\n\n"
@@ -317,6 +358,11 @@ async def start_layer(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.edit_text("🎭 Создай свой лееринг!\nВведи запрос для поиска первого аромата:")
     await state.set_state(LayeringStates.waiting_for_perfumes)
     await state.update_data(selected_indices=[])
+
+@dp.callback_query(F.data == "new_search")
+async def new_search(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.edit_text("🔍 Введи новый запрос для поиска следующего аромата:")
+    # Сохраняем текущий выбор, но не сбрасываем
 
 async def main():
     logging.basicConfig(level=logging.INFO)
