@@ -5,6 +5,7 @@ from rich.panel import Panel
 from rich.prompt import Prompt, IntPrompt
 from rich import box
 import logging
+import json
 
 # Настройка логирования и rich-консоли
 console = Console()
@@ -204,58 +205,61 @@ def display_search_results(results: pd.DataFrame):
 
 # Анализ лееринга с поддержкой пресетов
 def analyze_layering(perfumes):
-    # Собираем все слова из названий, аккордов и описания для гибкой проверки
-    selected_words = set()
+    # Загружаем правила
+    try:
+        with open("layering_rules.json", "r", encoding="utf-8") as f:
+            rules = json.load(f)
+        positive_rules = rules["positive"]
+        risk_rules = rules["risks"]
+        negative_rules = rules.get("negative", [])  # Новый раздел
+    except FileNotFoundError:
+        console.print("[yellow]Файл layering_rules.json не найден — использую базовые правила[/yellow]")
+        positive_rules = LAYERING_RULES["positive"]
+        risk_rules = LAYERING_RULES["risks"]
+        negative_rules = []
+
+    # Собираем ноты (без 'notes')
+    notes_all = " "
     for p in perfumes:
-        # Название аромата
-        name = get_name(p).lower()
-        selected_words.update(name.split())
-        
-        # Аккорды/ноты
-        if "Main Accords" in p.index:
-            accords = str(p.get("Main Accords", "")).lower()
-            selected_words.update(accords.split(", "))
-        
-        # Описание (если есть ноты или бренд)
-        if "Description" in p.index:
-            desc = str(p.get("Description", "")).lower()
-            selected_words.update(desc.split())
-        
-        # Бренд (через нашу функцию)
-        brand = get_brand(p).lower()
-        selected_words.update(brand.split())
+        notes_all += " " + str(p.get("Main Accords", "")).lower()
+        notes_all += " " + str(p.get("Description", "")).lower()
 
-    # Проверяем пресеты по словам
-    for preset_key, preset_data in PRESETS.items():
-        preset_words = set()
-        for name in preset_key:
-            preset_words.update(name.lower().split())
-        
-        if preset_words.issubset(selected_words):
-            return {
-                "compatibility": preset_data["compatibility"],
-                "vibe": preset_data["vibe"],
-                "risks": preset_data["risks"],
-                "tips": preset_data["tips"] + ["2–3 пшика всего, чтобы не перегрузить"]
-            }
-
-    # Общий анализ, если пресета нет
-    notes_all = " ".join(str(p.get("Main Accords", "") + " " + p.get("Description", "")).lower() for p in perfumes)
+    notes_all = notes_all.strip()
 
     compatibility = 70
-    vibe = "Уникальный микс — экспериментальный и интересный 🧪"
-    risks = ["Минимальные — должно сработать гладко!"]
-    tips = ["Наноси сначала более лёгкий/свежий аромат, сверху — тяжёлый", "2–3 пшика всего"]
+    vibe = "Unique mix — experimental and interesting 🧪"
+    risks = []
 
-    if "ваниль" in notes_all and any(word in notes_all for word in ["морской", "водный", "цитрус", "соль", "свежий"]):
-        compatibility += 20
-        vibe = "Пляжный крем с ванильной сладостью ☀️🧴🍦"
+    tips = ["Apply lighter/fresh scent first, heavy on top", "2–3 sprays total to avoid overload"]
 
-    if "перец" in notes_all and "цветочный" in notes_all:
-        compatibility += 20
-        vibe = "Цветы смягчают остроту перца — элегантный результат 🌸🌶️"
+    # Positive правила
+    for rule in positive_rules:
+        keywords = [k.lower() for k in rule["keywords"]]
+        if all(word in notes_all for word in keywords):
+            compatibility += rule["bonus"]
+            vibe = rule["vibe"]
+            if "risk" in rule and rule["risk"]:
+                risks.append(rule["risk"])
 
-    compatibility = min(100, compatibility + len(perfumes) * 5)
+    # Negative правила (уменьшают совместимость)
+    for rule in negative_rules:
+        keywords = [k.lower() for k in rule["keywords"]]
+        if all(word in notes_all for word in keywords):
+            compatibility += rule["penalty"]  # penalty отрицательное
+            vibe = rule["vibe"]
+            if "risk" in rule and rule["risk"]:
+                risks.append(rule["risk"])
+
+    compatibility = max(50, min(100, compatibility + len(perfumes) * 5))  # Минимум 50%, чтобы не было 0
+
+    # Risks
+    for rule in risk_rules:
+        keywords = [k.lower() for k in rule["keywords"]]
+        if all(word in notes_all for word in keywords):
+            risks.append(rule["description"])
+
+    if not risks:
+        risks = ["Minimal — should work smoothly!"]
 
     return {
         "compatibility": compatibility,

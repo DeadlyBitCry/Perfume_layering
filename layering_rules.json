@@ -1,0 +1,149 @@
+{
+  "positive": [
+    {"keywords": ["vanilla", "marine", "aquatic", "citrus", "salt"], "bonus": 22, "vibe": "Beach vanilla cream with salty breeze", "risk": "Can feel slightly synthetic at first"},
+    {"keywords": ["pepper", "floral", "rose", "jasmine"], "bonus": 20, "vibe": "Spicy floral elegance with pepper kick", "risk": "Pepper may dominate opening"},
+    {"keywords": ["powdery", "iris", "violet", "gourmand"], "bonus": 25, "vibe": "Luxurious powdery gourmand dream", "risk": "Can become too powdery and dry"},
+    {"keywords": ["woody", "cedar", "sandalwood", "musk"], "bonus": 18, "vibe": "Clean woody musk sophistication", "risk": "Base may overpower lighter notes"},
+    {"keywords": ["amber", "tonka", "vanilla", "caramel"], "bonus": 28, "vibe": "Warm amber-tonka caramel hug", "risk": "Very sweet — easy to overdo"},
+    {"keywords": ["oud", "rose", "saffron"], "bonus": 30, "vibe": "Royal rose-oud with golden saffron", "risk": "Oud can become too intense"},
+    {"keywords": ["citrus", "bergamot", "ginger", "pepper"], "bonus": 20, "vibe": "Zesty spicy citrus explosion", "risk": "Sharp and short-lived opening"},
+    {"keywords": ["leather", "jasmine", "tuberose"], "bonus": 22, "vibe": "Sensual leather with white floral bloom", "risk": "Leather may feel animalic"},
+    {"keywords": ["tobacco", "vanilla", "honey", "tonka"], "bonus": 25, "vibe": "Sweet tobacco-honey dessert", "risk": "Can smell like pipe smoke on some skin"},
+    {"keywords": ["patchouli", "vetiver", "sandalwood"], "bonus": 18, "vibe": "Earthy woody trio — grounded elegance", "risk": "Patchouli can turn dirty"},
+    {"keywords": ["fig", "coconut", "vanilla"], "bonus": 20, "vibe": "Creamy fig-coconut tropical vacation", "risk": "Very sweet and milky"},
+    {"keywords": ["green", "galbanum", "basil", "vetiver"], "bonus": 22, "vibe": "Crisp green garden freshness", "risk": "Too sharp and green for some"},
+    {"keywords": ["lavender", "tonka", "coumarin"], "bonus": 18, "vibe": "Classic fougère with creamy tonka twist", "risk": "Lavender can feel old-fashioned"},
+    {"keywords": ["coffee", "vanilla", "cacao", "cardamom"], "bonus": 25, "vibe": "Rich coffee-chocolate gourmand", "risk": "Can smell burnt on hot skin"},
+    {"keywords": ["salt", "amber", "leather"], "bonus": 22, "vibe": "Salty leather with golden amber glow", "risk": "Salt may feel metallic"},
+    {"keywords": ["blackcurrant", "patchouli", "rose"], "bonus": 20, "vibe": "Dark fruity rose-patchouli drama", "risk": "Blackcurrant can turn catty"},
+    {"keywords": ["pine", "fir", "cedar", "smoke"], "bonus": 18, "vibe": "Smoky forest conifer hike", "risk": "Too Christmas-tree like"},
+    {"keywords": ["apple", "cinnamon", "vanilla", "clove"], "bonus": 22, "vibe": "Warm spiced apple pie", "risk": "Spices may dominate"},
+    {"keywords": ["osmanthus", "apricot", "leather"], "bonus": 20, "vibe": "Fruity apricot leather softness", "risk": "Osmanthus can feel plasticky"},
+    {"keywords": ["ylang-ylang", "coconut", "vanilla"], "bonus": 23, "vibe": "Tropical creamy ylang paradise", "risk": "Very floral and heady"},
+    {"keywords": ["bergamot", "neroli", "petitgrain"], "bonus": 18, "vibe": "Bright citrus cologne elegance", "risk": "Too light and fleeting"},
+    {"keywords": ["immortelle", "maple", "caramel"], "bonus": 25, "vibe": "Maple syrup gourmand fantasy", "risk": "Extremely sweet and sticky"},
+    {"keywords": ["myrrh", "frankincense", "labdanum"], "bonus": 22, "vibe": "Mystical incense resin depth", "risk": "Can smell churchy"},
+    {"keywords": ["magnolia", "tuberose", "orange blossom"], "bonus": 20, "vibe": "Lush white floral bouquet", "risk": "Very indolic and strong"},
+  {"keywords": ["citrus", "aquatic", "musk"], "bonus": 20, "vibe": "Clean aquatic citrus with soft musk", "risk": "Can feel slightly synthetic"},
+  {"keywords": ["leather", "smoke", "tobacco"], "bonus": 25, "vibe": "Smoky leather tobacco intensity", "risk": "Very masculine and bold"},
+  {"keywords": ["fig", "coconut", "green"], "bonus": 18, "vibe": "Creamy fig with coconut green freshness", "risk": "Milky and sweet"},
+  {"keywords": ["bergamot", "lavender", "vetiver"], "bonus": 20, "vibe": "Classic fougère with vetiver depth", "risk": "May feel old-school cologne"},
+  {"keywords": ["rose", "saffron", "oud"], "bonus": 28, "vibe": "Rich rose-saffron oud luxury", "risk": "Oud can overpower"},
+  {"keywords": ["apple", "cinnamon", "clove"], "bonus": 22, "vibe": "Spiced apple pie warmth", "risk": "Spices may dominate"},
+  {"keywords": ["jasmine", "ylang-ylang", "tuberose"], "bonus": 20, "vibe": "Lush white floral bouquet", "risk": "Very heady and indolic"},
+  {"keywords": ["patchouli", "vetiver", "cedar"], "bonus": 18, "vibe": "Earthy woody forest blend", "risk": "Patchouli can turn dirty"},
+  {"keywords": ["coffee", "cacao", "vanilla"], "bonus": 25, "vibe": "Rich coffee-chocolate gourmand", "risk": "Extremely sweet and gourmand"},
+  {"keywords": ["salt", "lemon", "amber"], "bonus": 20, "vibe": "Salty lemon with golden amber glow", "risk": "Salt may feel metallic"}
+],
+
+  "negative": [
+    {
+      "keywords": ["oud", "oud", "heavy"],
+      "penalty": -25,
+      "vibe": "Overpowering oud clash — too intense",
+      "risk": "Scent becomes muddy and suffocating"
+    },
+    {
+      "keywords": ["sweet", "sweet", "gourmand"],
+      "penalty": -20,
+      "vibe": "Cloying sugar overload",
+      "risk": "Too sweet, like syrup; can cause headache"
+    },
+    {
+      "keywords": ["citrus", "heavy", "base"],
+      "penalty": -18,
+      "vibe": "Unbalanced — top notes disappear fast",
+      "risk": "Citrus evaporates, leaving heavy base alone"
+    },
+    {
+      "keywords": ["marine", "smoke", "tobacco"],
+      "penalty": -22,
+      "vibe": "Conflicting — like salty smoke",
+      "risk": "Feels metallic or burnt"
+    },
+    {
+      "keywords": ["green", "gourmand", "sweet"],
+      "penalty": -15,
+      "vibe": "Mismatched — green candy",
+      "risk": "Green notes turn bitter with sweetness"
+    },
+    {
+      "keywords": ["leather", "citrus", "light"],
+      "penalty": -20,
+      "vibe": "Clashing temperatures — cold leather soup",
+      "risk": "Citrus fades, leather dominates awkwardly"
+    },
+    {
+      "keywords": ["synthetic", "synthetic"],
+      "penalty": -25,
+      "vibe": "Chemical mess",
+      "risk": "Strong alcoholic or plastic smell at start"
+    },
+    {
+      "keywords": ["incense", "incense", "resin"],
+      "penalty": -22,
+      "vibe": "Overwhelming resin church",
+      "risk": "Too smoky, like incense overdose"
+    },
+    {
+      "keywords": ["fruit", "fruit", "berry"],
+      "penalty": -18,
+      "vibe": "Fruity chaos — candy salad",
+      "risk": "Becomes too juicy and artificial"
+    },
+    {
+      "keywords": ["lavender", "lavender", "fougère"],
+      "penalty": -15,
+      "vibe": "Old-school barbershop overload",
+      "risk": "Lavender bitterness dominates"
+    },
+    {
+      "keywords": ["amber", "amber", "heavy"],
+      "penalty": -20,
+      "vibe": "Sticky amber bomb",
+      "risk": "Too warm and suffocating in heat"
+    },
+    {
+      "keywords": ["patchouli", "patchouli", "earthy"],
+      "penalty": -22,
+      "vibe": "Dirty earth overload",
+      "risk": "Patchouli can smell like moldy basement"
+    },
+    {
+      "keywords": ["coconut", "coconut", "sweet"],
+      "penalty": -18,
+      "vibe": "Coconut cream excess",
+      "risk": "Too milky and tropical, like sunscreen"
+    },
+    {
+      "keywords": ["cumin", "cumin", "spicy"],
+      "penalty": -25,
+      "vibe": "Sweaty spice disaster",
+      "risk": "Cumin often smells like body odor"
+    },
+    {
+      "keywords": ["indolic", "indolic", "jasmine"],
+      "penalty": -20,
+      "vibe": "Overpowering floral decay",
+      "risk": "Indolic notes can smell like rotting flowers"
+    },
+    {
+  "keywords": ["iris", "iris", "gourmand", "sweet"],
+  "penalty": -15,
+  "vibe": "Overloaded powdery gourmand bomb",
+  "risk": "High chance of headache and cloying sweetness"
+    }
+  ],
+  "risks": [
+    {"keywords": ["oud", "animalic", "castoreum"], "description": "Oud + animalic notes may become too fecal or barnyard-like"},
+    {"keywords": ["blackcurrant", "catty", "indolic"], "description": "Blackcurrant + indolic flowers can turn cat urine-like on skin"},
+    {"keywords": ["tuberose", "heavy", "indolic"], "description": "Heavy tuberose can become overpowering and nauseating"},
+    {"keywords": ["patchouli", "dirty", "earthy"], "description": "Dirty patchouli can smell like wet soil or musty basement"},
+    {"keywords": ["cumin", "sweaty", "spicy"], "description": "Cumin often gives sweaty body odor note"},
+    {"keywords": ["lily", "indolic", "funeral"], "description": "Indolic lilies can smell like funeral flowers or decaying"},
+    {"keywords": ["calone", "marine", "melon"], "description": "Too much calone = laundry detergent or watermelon bubblegum"},
+    {"keywords": ["iso e super", "woody", "amber"], "description": "Overdose of Iso E Super can smell like pencil shavings or chemical"},
+    {"keywords": ["saffron", "metallic", "blood"], "description": "Saffron sometimes gives metallic blood-like note"},
+    {"keywords": ["two", "gourmand", "sweet"], "description": "Two very sweet gourmands = cloying sugar overload"}
+  ]
+}
