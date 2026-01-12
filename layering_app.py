@@ -9,7 +9,8 @@ import json
 
 # Настройка логирования и rich-консоли
 console = Console()
-logging.basicConfig(filename="perfume_layering.log", level=logging.INFO, encoding='utf-8')
+logging.basicConfig(filename="perfume_layering.log", level=logging.INFO,
+                    encoding='utf-8')
 
 # Глобальные правила лееринга
 LAYERING_RULES = {
@@ -113,8 +114,10 @@ def get_brand(row):
         return words[0]
     return "Неизвестный бренд"
 
+
 def get_name(row):
     return row.get("Name", "Без названия")
+
 
 # Загрузка базы
 def load_base():
@@ -128,12 +131,11 @@ def load_base():
 
     try:
         df = pd.read_csv(filepath, encoding='utf-8')
-        required = {"Name"}  # минимальные колонки, в большом датасете могут быть другие названия
+        required = {"Name"}
         actual_columns = set(df.columns.str.lower())
         missing = required - actual_columns
         if missing:
             console.print(f"[yellow]Предупреждение: в большой базе могут быть другие названия колонок. Использую доступные.[/yellow]")
-        
         console.print(f"[green]База загружена: {len(df)} ароматов из {'большой' if base_choice == '2' else 'маленькой'} базы![/green]")
         logging.info(f"Загружена база: {len(df)} записей из {filepath}")
         return df
@@ -144,11 +146,13 @@ def load_base():
         console.print(f"[red]Ошибка: {e}[/red]")
         return None
 
+
 def load_base_fallback():
     try:
         return pd.read_csv("perfume_base(2).csv", encoding='utf-8')
     except:
         return None
+
 
 # Поиск ароматов по подстроке (имя или бренд)
 def search_perfumes(df: pd.DataFrame, query: str) -> pd.DataFrame:
@@ -173,13 +177,15 @@ def search_perfumes(df: pd.DataFrame, query: str) -> pd.DataFrame:
 
     return df[mask].reset_index(drop=True)
 
+
 # Показ результатов поиска в красивой таблице
 def display_search_results(results: pd.DataFrame):
     if results.empty:
         console.print("[yellow]Ничего не найдено 😔[/yellow]")
         return None
 
-    table = Table(title="Найденные парфюмы", box=box.ROUNDED, show_header=True, header_style="bold magenta")
+    table = Table(title="Найденные парфюмы", box=box.ROUNDED, show_header=True,
+                  header_style="bold magenta")
     table.add_column("№", style="dim", width=4)
     table.add_column("Название", style="cyan", width=30)
     table.add_column("Аккорды", style="white", width=40)
@@ -199,9 +205,9 @@ def display_search_results(results: pd.DataFrame):
             rating,
             gender
         )
-    
     console.print(table)
     return results
+
 
 # Анализ лееринга с поддержкой пресетов
 def analyze_layering(perfumes):
@@ -209,69 +215,142 @@ def analyze_layering(perfumes):
     try:
         with open("layering_rules.json", "r", encoding="utf-8") as f:
             rules = json.load(f)
-        positive_rules = rules["positive"]
-        risk_rules = rules["risks"]
-        negative_rules = rules.get("negative", [])  # Новый раздел
+        positive_rules = rules.get("positive", [])
+        negative_rules = rules.get("negative", [])
+        risk_rules = rules.get("risks", [])
     except FileNotFoundError:
         console.print("[yellow]Файл layering_rules.json не найден — использую базовые правила[/yellow]")
         positive_rules = LAYERING_RULES["positive"]
-        risk_rules = LAYERING_RULES["risks"]
         negative_rules = []
+        risk_rules = LAYERING_RULES["risks"]
 
-    # Собираем ноты (без 'notes')
-    notes_all = " "
+    # Собираем ноты из базы (безопасно)
+    notes_all = ""
     for p in perfumes:
         notes_all += " " + str(p.get("Main Accords", "")).lower()
         notes_all += " " + str(p.get("Description", "")).lower()
-
     notes_all = notes_all.strip()
 
-    compatibility = 70
-    vibe = "Unique mix — experimental and interesting 🧪"
-    risks = []
+    # Fragrance Wheel (оставляем как есть)
+    FRAGRANCE_WHEEL = {
+        "floral": ["floral", "soft floral", "floral oriental"],
+        "oriental": ["oriental", "soft oriental", "woody oriental"],
+        "woody": ["woody", "dry woods", "mossy woods"],
+        "fresh": ["fresh", "citrus", "green", "water"]
+    }
 
-    tips = ["Apply lighter/fresh scent first, heavy on top", "2–3 sprays total to avoid overload"]
+    COMPATIBILITY_MATRIX = {
+        "floral": {"floral": 30, "oriental": 20, "woody": 10, "fresh": -10},
+        "oriental": {"oriental": 30, "floral": 20, "woody": 20, "fresh": -10},
+        "woody": {"woody": 30, "oriental": 20, "floral": 10, "fresh": 0},
+        "fresh": {"fresh": 30, "woody": 0, "floral": -10, "oriental": -10}
+    }
 
-    # Positive правила
+    def get_family(accords: str):
+        accords = accords.lower()
+        for family, keywords in FRAGRANCE_WHEEL.items():
+            if any(k in accords for k in keywords):
+                return family
+        return "unknown"
+
+    family_bonus = 0
+    perfume_families = [get_family(p.get("Main Accords", "")) for p in perfumes]
+    if not all(f == "unknown" for f in perfume_families):
+        pairs = [(perfume_families[i], perfume_families[j]) for i in range(len(perfume_families)) for j in range(i+1, len(perfume_families))]
+        for f1, f2 in pairs:
+            if f1 != "unknown" and f2 != "unknown":
+                family_bonus += COMPATIBILITY_MATRIX.get(f1, {}).get(f2, 0)
+        family_bonus = family_bonus // len(pairs) if pairs else 0
+
+    compatibility = 70 + family_bonus
+
+    # Собираем все сработавшие positive-правила
+    positive_hits = []
     for rule in positive_rules:
         keywords = [k.lower() for k in rule["keywords"]]
-        if all(word in notes_all for word in keywords):
-            compatibility += rule["bonus"]
-            vibe = rule["vibe"]
-            if "risk" in rule and rule["risk"]:
-                risks.append(rule["risk"])
+        matched = sum(1 for word in keywords if word in notes_all)
+        if matched > 0:
+            weight_factor = rule.get("weight", 10) / 10.0
+            bonus = round(rule["bonus"] * (matched / len(keywords)) * weight_factor)
+            positive_hits.append({
+                "bonus": bonus,
+                "vibe": rule["vibe"],
+                "risk": rule.get("risk", "")
+            })
 
-    # Negative правила (уменьшают совместимость)
+    # Сортируем по силе бонуса
+    positive_hits.sort(key=lambda x: x["bonus"], reverse=True)
+
+    # Берём только топ-3 самых сильных positive (чтобы не перезаписывать вайб бесконечно)
+    positive_hits = positive_hits[:3]
+
+    vibe = "Unique mix — experimental and interesting 🧪"  # дефолт
+    risks = []
+
+    # Применяем positive
+    if positive_hits:
+        vibe = positive_hits[0]["vibe"]  # самый сильный positive вайб
+        for hit in positive_hits:
+            compatibility += hit["bonus"]
+            if hit["risk"]:
+                risks.append(hit["risk"])
+
+    # Negative правила — самые сильные сверху
+    negative_hits = []
     for rule in negative_rules:
         keywords = [k.lower() for k in rule["keywords"]]
-        if all(word in notes_all for word in keywords):
-            compatibility += rule["penalty"]  # penalty отрицательное
-            vibe = rule["vibe"]
-            if "risk" in rule and rule["risk"]:
-                risks.append(rule["risk"])
+        matched = sum(1 for word in keywords if word in notes_all)
+        if matched > 0:
+            weight_factor = rule.get("weight", 10) / 10.0
+            penalty = round(rule["penalty"] * (matched / len(keywords)) * weight_factor)
+            negative_hits.append({
+                "penalty": penalty,
+                "vibe": rule["vibe"],
+                "risk": rule["risk"]
+            })
 
-    compatibility = max(50, min(100, compatibility + len(perfumes) * 5))  # Минимум 50%, чтобы не было 0
+    negative_hits.sort(key=lambda x: x["penalty"], reverse=True)  # самые сильные штрафы — сверху
+    negative_hits = negative_hits[:5]  # максимум 5 самых сильных
 
-    # Risks
+    # Применяем negative
+    for hit in negative_hits:
+        compatibility += hit["penalty"]
+        if hit["vibe"]:
+            vibe = hit["vibe"]  # самый сильный негативный вайб перезаписывает
+        if hit["risk"]:
+            risks.append(hit["risk"])
+
+    all_hits = positive_hits + negative_hits
+
+    if all_hits:
+        # Находим правило с наибольшим абсолютным влиянием
+        strongest = max(all_hits, key=lambda x: abs(x.get("bonus", 0) + x.get("penalty", 0)))
+        vibe = strongest.get("vibe", vibe)
+    # Обычные риски (без штрафа, просто описание)
     for rule in risk_rules:
         keywords = [k.lower() for k in rule["keywords"]]
-        if all(word in notes_all for word in keywords):
+        if any(word in notes_all for word in keywords):
             risks.append(rule["description"])
+
+    # Ограничение рисков — только 5 самых уникальных
+    risks = list(dict.fromkeys(risks))[:5]  # убираем дубликаты и берём первые 5
 
     if not risks:
         risks = ["Minimal — should work smoothly!"]
+
+    compatibility = max(50, min(100, compatibility + len(perfumes) * 5))
 
     return {
         "compatibility": compatibility,
         "vibe": vibe,
         "risks": risks,
-        "tips": tips
+        "tips": ["Apply lighter/fresh scent first, heavy on top", "2–3 sprays total to avoid overload"]
     }
+
 
 # Основное меню
 def main():
     console.print(Panel("[bold magenta]🌸 Perfume Layering Assistant 🌸[/bold magenta]\nГенератор леерингов от [cyan]Saint[/cyan]", box=box.DOUBLE))
-    
     df = load_base()
     if df is None:
         return
@@ -283,7 +362,8 @@ def main():
     use_preset = Prompt.ask("Хочешь сразу выбрать один из моих экспериментов?", choices=["y", "n"], default="n")
 
     if use_preset == "y":
-        preset_table = Table(title="Мои готовые лееринги", box=box.ROUNDED, header_style="bold magenta")
+        preset_table = Table(title="Мои готовые лееринги", box=box.ROUNDED,
+                             header_style="bold magenta")
         preset_table.add_column("№", style="dim")
         preset_table.add_column("Микс", style="cyan")
         preset_table.add_column("Краткое описание", style="white")
@@ -372,6 +452,7 @@ def main():
             f.write("Риски:\n" + "\n".join(f"- {r}" for r in analysis["risks"]) + "\n")
             f.write("Советы:\n" + "\n".join(f"- {t}" for t in analysis["tips"]) + "\n")
         console.print("[green]Результат сохранён в last_layering.txt[/green]")
+
 
 if __name__ == "__main__":
     main()
