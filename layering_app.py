@@ -224,7 +224,7 @@ def analyze_layering(perfumes):
         negative_rules = []
         risk_rules = LAYERING_RULES["risks"]
 
-    # Собираем ноты из базы (безопасно)
+    # Собираем ноты
     notes_all = ""
     for p in perfumes:
         notes_all += " " + str(p.get("Main Accords", "")).lower()
@@ -264,7 +264,12 @@ def analyze_layering(perfumes):
 
     compatibility = 70 + family_bonus
 
-    # Собираем все сработавшие positive-правила
+    vibe = "Unique mix — experimental and interesting 🧪"
+    risks = []
+
+    tips = ["Apply lighter/fresh scent first, heavy on top", "2–3 sprays total to avoid overload"]
+
+    # Positive правила
     positive_hits = []
     for rule in positive_rules:
         keywords = [k.lower() for k in rule["keywords"]]
@@ -278,24 +283,10 @@ def analyze_layering(perfumes):
                 "risk": rule.get("risk", "")
             })
 
-    # Сортируем по силе бонуса
     positive_hits.sort(key=lambda x: x["bonus"], reverse=True)
-
-    # Берём только топ-3 самых сильных positive (чтобы не перезаписывать вайб бесконечно)
     positive_hits = positive_hits[:3]
 
-    vibe = "Unique mix — experimental and interesting 🧪"  # дефолт
-    risks = []
-
-    # Применяем positive
-    if positive_hits:
-        vibe = positive_hits[0]["vibe"]  # самый сильный positive вайб
-        for hit in positive_hits:
-            compatibility += hit["bonus"]
-            if hit["risk"]:
-                risks.append(hit["risk"])
-
-    # Negative правила — самые сильные сверху
+    # Negative правила
     negative_hits = []
     for rule in negative_rules:
         keywords = [k.lower() for k in rule["keywords"]]
@@ -309,32 +300,40 @@ def analyze_layering(perfumes):
                 "risk": rule["risk"]
             })
 
-    negative_hits.sort(key=lambda x: x["penalty"], reverse=True)  # самые сильные штрафы — сверху
-    negative_hits = negative_hits[:5]  # максимум 5 самых сильных
+    negative_hits.sort(key=lambda x: x["penalty"], reverse=True)
+    negative_hits = negative_hits[:5]
 
-    # Применяем negative
-    for hit in negative_hits:
-        compatibility += hit["penalty"]
-        if hit["vibe"]:
-            vibe = hit["vibe"]  # самый сильный негативный вайб перезаписывает
+    all_hits = positive_hits + negative_hits
+    if all_hits:
+        # Сортируем по абсолютной силе влияния
+        all_hits.sort(key=lambda x: abs(x.get("bonus", 0) + x.get("penalty", 0)), reverse=True)
+            
+        # Самый сильный вайб
+        vibe = all_hits[0]["vibe"]
+            
+        # Добавляем второй сильный, если есть
+        if len(all_hits) > 1 and all_hits[1]["vibe"]:
+            vibe += " with " + all_hits[1]["vibe"].lower()
+
+    # Применяем бонусы и штрафы
+    for hit in positive_hits:
+        compatibility += hit["bonus"]
         if hit["risk"]:
             risks.append(hit["risk"])
 
-    all_hits = positive_hits + negative_hits
+    for hit in negative_hits:
+        compatibility += hit["penalty"]
+        if hit["risk"]:
+            risks.append(hit["risk"])
 
-    if all_hits:
-        # Находим правило с наибольшим абсолютным влиянием
-        strongest = max(all_hits, key=lambda x: abs(x.get("bonus", 0) + x.get("penalty", 0)))
-        vibe = strongest.get("vibe", vibe)
-    # Обычные риски (без штрафа, просто описание)
+    # Обычные риски (без штрафа)
     for rule in risk_rules:
         keywords = [k.lower() for k in rule["keywords"]]
         if any(word in notes_all for word in keywords):
             risks.append(rule["description"])
 
-    # Ограничение рисков — только 5 самых уникальных
-    risks = list(dict.fromkeys(risks))[:5]  # убираем дубликаты и берём первые 5
-
+    # Уникальные риски — топ-5
+    risks = list(dict.fromkeys(risks))[:5]
     if not risks:
         risks = ["Minimal — should work smoothly!"]
 
@@ -344,9 +343,8 @@ def analyze_layering(perfumes):
         "compatibility": compatibility,
         "vibe": vibe,
         "risks": risks,
-        "tips": ["Apply lighter/fresh scent first, heavy on top", "2–3 sprays total to avoid overload"]
+        "tips": tips
     }
-
 
 # Основное меню
 def main():
