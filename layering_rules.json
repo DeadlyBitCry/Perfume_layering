@@ -20,6 +20,20 @@
     "weight": 14
   },
   {
+  "keywords": ["rose", "green", "floral", "litchi", "fresh", "musk"],
+  "bonus": 26,
+  "vibe": "Нежный розовый букет с лёгкой зеленью и фруктовой свежестью 🌸🍃",
+  "risk": "Может быть слишком лёгким и недолгоиграющим",
+  "weight": 13
+  },
+  {
+  "keywords": ["vetiver", "woody", "smoky", "spicy", "earthy"],
+  "bonus": 24,
+  "vibe": "Сухой ветиверовый дым с пряной древесной глубиной 🌿🔥",
+  "risk": "Может стать слишком сухим и землистым на тёплой коже",
+  "weight": 12
+  },
+  {
     "keywords": ["woody", "cedar", "sandalwood", "musk"],
     "bonus": 18,
     "vibe": "Clean woody musk sophistication",
@@ -325,6 +339,81 @@
     "vibe": "Bright citrus with elegant oakmoss-woody depth",
     "risk": "Pineapple may dominate and feel synthetic",
     "weight": 15
+  },
+  {
+  "keywords": ["green", "tea", "citrus", "floral", "chypre", "leather", "mossy"],
+  "bonus": 26,
+  "vibe": "Свежий зелёный чай в классическом шипровом саду 🌿🍵",
+  "risk": "Leather может стать слишком доминирующим на тёплой коже",
+  "weight": 13
+  },
+  {
+  "keywords": ["aldehydic", "green", "floral", "chypre", "coriander", "citrus"],
+  "bonus": 28,
+  "vibe": "Классический зелёный шипр с искрящимися альдегидами и пряным кориандром 🌿✨",
+  "weight": 14
+  },
+  {
+  "keywords": ["oud", "cherry", "vanilla", "floral", "gourmand"],
+  "bonus": 22,
+  "vibe": "Тёмная вишнёвая роскошь с глубоким удовым шлейфом 🍒🖤",
+  "risk": "Очень сладко и интенсивно",
+  "weight": 13
+  },
+  {
+  "keywords": ["cherry", "almond", "gourmand", "neroli", "citrus", "floral"],
+  "bonus": 25,
+  "vibe": "Вишнёво-миндальный десерт с искрящимся нероли и цитрусовой свежестью 🍒🍋",
+  "weight": 13
+  },
+  {
+  "keywords": ["patchouli", "woody", "leather", "smoky", "warm"],
+  "bonus": 23,
+  "vibe": "Глубокий двойной пачули с дымно-кожаным шлейфом 🌲🔥",
+  "risk": "Очень интенсивно и может быть слишком дымным",
+  "weight": 13
+  },
+  {
+  "keywords": ["vanilla", "gourmand", "sweet", "citrus", "fresh", "aquatic"],
+  "bonus": 27,
+  "vibe": "Тёплая ванильная сладость в объятиях свежего цитрусового бриза 🍦☀️",
+  "risk": "Сладость может стать слишком доминирующей в жару",
+  "weight": 14
+  },
+  {
+  "keywords": ["aldehydic", "floral", "musc", "vanilla", "animalic", "spicy"],
+  "bonus": 23,
+  "vibe": "Изысканная классика с животной мускусной страстью 🖤🌹",
+  "risk": "Очень интенсивно и может быть слишком провокационно",
+  "weight": 13
+  },
+  {
+  "keywords": ["citrus", "green", "floral", "musk", "fresh", "aquatic"],
+  "bonus": 27,
+  "vibe": "Свежий цитрусово-зелёный бриз с мускусной мягкостью и цветочной чистотой 🌿🍋",
+  "risk": "Может быть слишком лёгким и недолгоиграющим",
+  "weight": 13
+  },
+  {
+  "keywords": ["citrus", "marine", "aquatic", "musk", "fresh", "woody"],
+  "bonus": 26,
+  "vibe": "Итальянский цитрусовый бриз с минеральным мускусным шлейфом 🌊🍋",
+  "risk": "Aquatic может стать слишком водянистым в жару",
+  "weight": 13
+  },
+  {
+  "keywords": ["iris", "powdery", "green", "floral", "chypre", "aldehydic"],
+  "bonus": 26,
+  "vibe": "Пудрово-ирисовый шипр с зелёной свежестью и элегантной классикой 🌿✨",
+  "risk": "Может стать слишком сухим и пудровым на тёплой коже",
+  "weight": 13
+  },
+  {
+  "keywords": ["vanilla", "floral", "fruity", "patchouli", "musk"],
+  "bonus": 28,
+  "vibe": "Тёплый цветочно-ванильный букет с мягкой фруктовой дымкой 🍂🌸",
+  "risk": "Может быть слишком сладким и густым",
+  "weight": 14
   }
 ],
 
@@ -335,6 +424,34 @@
     "vibe": "Overpowering oud clash — too intense",
     "risk": "Scent becomes muddy and suffocating",
     "weight": 15
+  },
+  {
+  "keywords": ["spicy", "warm", "gourmand", "almond", "citrus", "fresh"],
+  "penalty": -20,
+  "vibe": "Восточный гурман vs свежий миндаль — конфликт",
+  "risk": "Пряности и миндаль могут дать приторный и странный результат",
+  "weight": 13
+  },
+  {
+  "keywords": ["incense", "oud", "smoky", "amber", "spicy", "warm"],
+  "penalty": -24,
+  "vibe": "Тяжёлый дымно-ладанный перебор",
+  "risk": "Слишком интенсивно и душно, риск головной боли",
+  "weight": 15
+  },
+  {
+  "keywords": ["aldehydic", "floral", "citrus", "fresh", "chypre"],
+  "penalty": -18,
+  "vibe": "Классика vs свежесть — дисбаланс",
+  "risk": "Альдегиды №5 могут конфликтовать с цитрусом Colonia",
+  "weight": 12
+  },
+  {
+  "keywords": ["patchouli", "woody", "leather", "smoky", "warm"],
+  "penalty": -22,
+  "vibe": "Грязный пачули-бомб",
+  "risk": "Два разных пачули могут дать грязный, дымный перебор",
+  "weight": 14
   },
   {
     "keywords": ["sweet", "sweet", "gourmand"],
@@ -349,6 +466,13 @@
     "vibe": "Unbalanced — top notes disappear fast",
     "risk": "Citrus evaporates, leaving heavy base alone",
     "weight": 12
+  },
+  {
+  "keywords": ["date", "fig", "spicy", "gourmand", "green", "chypre"],
+  "penalty": -22,
+  "vibe": "Сладко-сухой контрастный хаос",
+  "risk": "Финики и зелень могут дать приторный и странный результат",
+  "weight": 14
   },
   {
     "keywords": ["marine", "smoke", "tobacco"],
@@ -510,6 +634,20 @@
     "vibe": "Sticky oriental bomb",
     "risk": "Too warm, suffocating and heavy in heat",
     "weight": 14
+  },
+  {
+  "keywords": ["oud", "amber", "vanilla", "spicy", "warm", "musk"],
+  "penalty": -24,
+  "vibe": "Тяжёлая удово-амбровая бомба",
+  "risk": "Слишком насыщенно и душно, риск головной боли",
+  "weight": 15
+  },
+  {
+  "keywords": ["oud", "cherry", "vanilla", "floral", "gourmand"],
+  "penalty": -20,
+  "vibe": "Сладко-удовый хаос",
+  "risk": "Вишня и уд могут превратиться в приторный сироп",
+  "weight": 13
   }
 ]
 }
