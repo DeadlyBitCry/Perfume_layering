@@ -1,12 +1,26 @@
 import pandas as pd
+import os
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich.prompt import Prompt, IntPrompt
 from rich import box
+from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 import logging
 import json
 
+# Загрузка ключа Gemini из .env
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    print("GEMINI_API_KEY не найден в .env!")
+
+    def improve_vibe(top_vibes):
+        return top_vibes[0] if top_vibes else "Unique mix — experimental and interesting 🧪"
+else:
+    client = genai.Client(api_key=GEMINI_API_KEY)
 # Настройка логирования и rich-консоли
 console = Console()
 logging.basicConfig(filename="perfume_layering.log", level=logging.INFO,
@@ -305,6 +319,32 @@ def guess_season(accords: str, description: str = "") -> str:
     
     return "all"  # универсальный, если ничего не определилось
 
+def improve_vibe(top_vibes):
+    if not top_vibes:
+        return "Unique mix — experimental and interesting 🧪"
+
+    prompt = (
+        "У тебя есть несколько коротких описаний аромата от разных правил. "
+        "Сделай из них одно красивое, связное, поэтичное предложение на русском языке (10–15 слов). "
+        "Включи элементы из всех описаний, чтобы текст был богатым. "
+        "Не перечисляй, не используй 'with'. Пиши как настоящий парфюмерный обзор."
+        "Добавь 1–2 эмодзи, если подходит. \n\n"
+        f"Описания: {'; '.join(top_vibes)}"
+    )
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                thinking_config=types.ThinkingConfig(thinking_budget=0)  # отключаем thinking
+            )
+        )
+        return response.text.strip()
+    except Exception as e:
+        print(f"Gemini error: {e}")
+        return top_vibes[0] if top_vibes else "Unique mix — experimental and interesting 🧪"
+
 # Анализ лееринга с поддержкой пресетов
 def analyze_layering(perfumes):
     # Загружаем правила
@@ -371,15 +411,11 @@ def analyze_layering(perfumes):
 
     all_hits = positive_hits + negative_hits
     if all_hits:
-        # Сортируем по абсолютной силе влияния
         all_hits.sort(key=lambda x: abs(x.get("bonus", 0) + x.get("penalty", 0)), reverse=True)
-
-        # Самый сильный вайб
-        vibe = all_hits[0]["vibe"]
-
-        # Добавляем второй сильный, если есть
-        if len(all_hits) > 1 and all_hits[1]["vibe"]:
-            vibe += " with " + all_hits[1]["vibe"].lower()
+        top_vibes = [hit["vibe"] for hit in all_hits[:4] if hit["vibe"]]
+        vibe = improve_vibe(top_vibes)
+    else:
+        vibe = "Unique mix — experimental and interesting 🧪"
 
     # Применяем бонусы и штрафы
     for hit in positive_hits:
@@ -404,6 +440,7 @@ def analyze_layering(perfumes):
         risks = ["Minimal — should work smoothly!"]
 
     compatibility = max(50, min(100, compatibility + len(perfumes) * 5))
+
 
     seasons = []
     for p in perfumes:
@@ -431,7 +468,6 @@ def analyze_layering(perfumes):
     elif "summer" in unique_seasons and "winter" in unique_seasons:
         compatibility -= 10
         vibe += "\n[b] Контраст сезонов, может быть необычно[/b]"
-
     return {
         "compatibility": compatibility,
         "vibe": vibe,

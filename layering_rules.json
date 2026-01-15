@@ -304,6 +304,27 @@
     "vibe": "Tropical creamy magnolia bloom",
     "risk": "Very floral and milky",
     "weight": 14
+  },
+  {
+    "keywords": ["aquatic", "marine", "citrus", "amber", "aromatic"],
+    "bonus": 28,
+    "vibe": "Deep ocean breeze with bright citrus depth",
+    "risk": "May feel slightly synthetic at first",
+    "weight": 14
+  },
+  {
+    "keywords": ["citrus", "amber", "musk", "aquatic", "woody"],
+    "bonus": 24,
+    "vibe": "Elegant citrus-amber with deep aquatic shade",
+    "risk": "BDC may overpower the freshness if applied heavily",
+    "weight": 13
+  },
+  {
+    "keywords": ["citrus", "bergamot", "pineapple", "oakmoss", "woody", "musk"],
+    "bonus": 30,
+    "vibe": "Bright citrus with elegant oakmoss-woody depth",
+    "risk": "Pineapple may dominate and feel synthetic",
+    "weight": 15
   }
 ],
 
@@ -475,18 +496,20 @@
     "vibe": "Catty spicy disaster",
     "risk": "Blackcurrant + cumin = cat urine + sweat",
     "weight": 15
+  },
+  {
+    "keywords": ["oud", "vanilla", "cinnamon", "praline", "dates"],
+    "penalty": -25,
+    "vibe": "Heavy oud-gourmand overload",
+    "risk": "Too cloying, intense and headache-inducing",
+    "weight": 15
+  },
+  {
+    "keywords": ["oud", "amber", "vanilla", "spicy", "warm"],
+    "penalty": -20,
+    "vibe": "Sticky oriental bomb",
+    "risk": "Too warm, suffocating and heavy in heat",
+    "weight": 14
   }
-  ],
-  "risks": [
-    {"keywords": ["oud", "animalic", "castoreum"], "description": "Oud + animalic notes may become too fecal or barnyard-like"},
-    {"keywords": ["blackcurrant", "catty", "indolic"], "description": "Blackcurrant + indolic flowers can turn cat urine-like on skin"},
-    {"keywords": ["tuberose", "heavy", "indolic"], "description": "Heavy tuberose can become overpowering and nauseating"},
-    {"keywords": ["patchouli", "dirty", "earthy"], "description": "Dirty patchouli can smell like wet soil or musty basement"},
-    {"keywords": ["cumin", "sweaty", "spicy"], "description": "Cumin often gives sweaty body odor note"},
-    {"keywords": ["lily", "indolic", "funeral"], "description": "Indolic lilies can smell like funeral flowers or decaying"},
-    {"keywords": ["calone", "marine", "melon"], "description": "Too much calone = laundry detergent or watermelon bubblegum"},
-    {"keywords": ["iso e super", "woody", "amber"], "description": "Overdose of Iso E Super can smell like pencil shavings or chemical"},
-    {"keywords": ["saffron", "metallic", "blood"], "description": "Saffron sometimes gives metallic blood-like note"},
-    {"keywords": ["two", "gourmand", "sweet"], "description": "Two very sweet gourmands = cloying sugar overload"}
-  ]
+]
 }
