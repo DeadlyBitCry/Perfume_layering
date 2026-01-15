@@ -15,16 +15,57 @@ logging.basicConfig(filename="perfume_layering.log", level=logging.INFO,
 # Глобальные правила лееринга
 LAYERING_RULES = {
     "positive": [
-        ("пудровый", "гурман", 95, "Пудровые ароматы + гурманская сладость = идеальный уютный микс 🍮✨", "зависит от типа сладости (тофи/ваниль — лучше, виски — может сушить)"),
-        ("цветочный", "перец", 90, "Цветы смягчают остроту перца → элегантный и мягкий результат 🌸🌶️", ""),
-        ("свежий", "ваниль", 85, "Свежий старт + ванильная база = летний десерт на пляже 🏖️🍦", "может быть спиртовой старт, если один из ароматов бюджетный"),
-        ("водный", "восточный", 80, "Водные ноты + восточные специи = морской бриз с пряностями 🌊🍂", ""),
-        ("мускус", "любой", 90, "Мускус усиливает стойкость и делает микс 'кожным' 🧴", ""),
+        (
+            "пудровый",
+            "гурман",
+            95,
+            "Пудра + гурманская сладость = идеальный уютный микс 🍮✨",
+            "зависит от сладости (тофи/ваниль — лучше, виски — может сушить)",
+        ),
+        (
+            "цветочный",
+            "перец",
+            90,
+            "Цветы смягчают остроту перца → элегантный и мягкий результат 🌸🌶️",
+            "",
+        ),
+        (
+            "свежий",
+            "ваниль",
+            85,
+            "Свежий старт + ванильная база = летний десерт на пляже 🏖️🍦",
+            "может быть спиртовой старт, если один из ароматов бюджетный",
+        ),
+        (
+            "водный",
+            "восточный",
+            80,
+            "Водные ноты + восточные специи = морской бриз с пряностями 🌊🍂",
+            "",
+        ),
+        (
+            "мускус",
+            "любой",
+            90,
+            "Мускус усиливает стойкость и делает микс 'кожным' 🧴",
+            "",
+        ),
     ],
     "risks": [
-        ("синтетика", "дешевизна", "Сильный спиртовой старт в начале — подожди 5–10 минут"),
-        ("два тяжелых", "база", "База может перебить верхние ноты — один аромат станет доминировать"),
-        ("гурман", "виски", "Алкогольная сладость может дать сухость и горечь"),
+        (
+            "синтетика",
+            "дешевизна",
+            "Сильный спиртовой старт в начале — подожди 5–10 минут"),
+        (
+            "два тяжелых",
+            "база",
+            "База перебивает верхние ноты — один аромат станет доминировать"
+        ),
+        (
+            "гурман",
+            "виски",
+            "Алкогольная сладость может дать сухость и горечь"
+        ),
     ]
 }
 
@@ -32,72 +73,97 @@ LAYERING_RULES = {
 PRESETS = {
     ("Mancera French Riviera", "Juliette has a gun Vanilla Vibes"): {
         "compatibility": 85,
-        "vibe": "Пляжный вайб с увлажняющим кремом и лёгкой ванильной сладостью 🏖️🧴",
+        "vibe": (
+            "Пляжный вайб с увлажняющим кремом "
+            "и лёгкой ванильной сладостью 🏖️🧴"
+        ),
         "risks": [
             "JHAG сразу уменьшает бьющий цитрусовый аромат Mancera",
             "Цветочные ноты Mancera становятся ярче",
-            "В итоге — ощущение увлажняющего крема, без намёка на сладость JHAG"
+            (
+                "В итоге — ощущение увлажняющего крема, "
+                "без намёка на сладость JHAG"
+            ),
         ],
         "tips": [
             "Порядок: сначала Mancera French Riviera, сверху Vanilla Vibes",
-            "Пропорции: примерно 1:1 (с уклоном на Mancera из-за разных пульверизаторов)",
-            "Итог: не 'мусорный' запах, но ожидал большего"
-        ]
+            (
+                "Пропорции: примерно 1:1 (с уклоном на Mancera "
+                "из-за разных пульверизаторов)"
+            ),
+            "Итог: не 'мусорный' запах, но ожидал большего",
+        ],
     },
     ("Givenchy Gentleman Reserve Privee", "Dior Homme Intense"): {
         "compatibility": 70,
         "vibe": "Сильная сухая пудровость с древесиной на фоне 🍂✨",
         "risks": [
-            "Древесные ноты становятся главенствующими и перебивают всё остальное",
+            "Древесные ноты становятся главными и перебивают всё остальное",
             "Отсутствует гурманская нотка от Givenchy",
-            "Просыпается сушняк в горле от сухости"
+            "Просыпается сушняк в горле от сухости",
         ],
         "tips": [
             "Порядок: сначала Dior Homme Intense, сверху Givenchy",
             "Пропорции: 1:1",
-            "Итог: база более выраженная, верхние этапы пропущены"
-        ]
+            "Итог: база более выраженная, верхние этапы пропущены",
+        ],
     },
     ("Paco Rabanne Pure XS", "Dior Homme Intense 2011"): {
         "compatibility": 90,
         "vibe": "Дорогая библиотека с алкоголем и девушками в макияже 📚🥃💄",
         "risks": [
             "Сильная пудра Dior может ужимать сладость Pure XS",
-            "Легко переборщить — стать слишком сладким"
+            "Легко переборщить — стать слишком сладким",
         ],
         "tips": [
             "Порядок: сначала Pure XS, сверху Dior Homme Intense 2011",
             "Пропорции: 2:1 (больше Pure XS, чтобы сладость играла ярче)",
-            "Итог: пудровые ароматы с гурманикой заходят на ура (зависит от ноты сладости)"
-        ]
+            (
+                "Итог: пудровые ароматы с гурманикой заходят на ура "
+                "(зависит от ноты сладости)"
+            ),
+        ],
     },
     ("Fakhar Lattafa", "Juliette has a gun Vanilla Vibes"): {
         "compatibility": 80,
-        "vibe": "Процесс готовки сладкой ягодной выпечки с 'французской ванилью' 🧁🍓",
+        "vibe": (
+            "Процесс готовки сладкой ягодной выпечки "
+            "с 'французской ванилью' 🧁🍓"
+        ),
         "risks": [
-            "Синтетика JHAG + дешевизна Lattafa = сильный аромат спирта в начале",
-            "Ваниль становится более кондитерской, чем воздушной"
+            (
+                "Синтетика JHAG + дешевизна Lattafa = сильный "
+                "аромат спирта в начале"
+            ),
+            "Ваниль становится более кондитерской, чем воздушной",
         ],
         "tips": [
-            "Порядок: сначала JHAG Vanilla Vibes (2 пшика), сверху Fakhar Lattafa",
+            "Порядок: сначала JHAG Vanilla Vibes, сверху Fakhar Lattafa",
             "Пропорции: 1:2 (больше JHAG)",
-            "Итог: работает не сразу, но через время — оригинальный аромат"
-        ]
+            "Итог: работает не сразу, но через время — оригинальный аромат",
+        ],
     },
     ("Fakhar Lattafa", "Versace Dylan Blue"): {
         "compatibility": 75,
-        "vibe": "Versace Dylan Blue, но без выделяющегося перца и смородины — более унисекс 🌊🌸",
+        "vibe": (
+            "Versace Dylan Blue, но без выделяющегося "
+            "перца и смородины — более унисекс 🌊🌸"
+        ),
         "risks": [
             "Цитрусовый старт может дать горечь",
-            "Чёрный перец смягчается цветочным ароматом"
+            "Чёрный перец смягчается цветочным ароматом",
         ],
         "tips": [
             "Порядок: сначала Versace Dylan Blue, сверху Fakhar Lattafa",
             "Пропорции: 1:1",
-            "Итог: делает Dylan Blue более универсальным по гендеру, но не оригинальнее"
-        ]
-    }
+            (
+                "Итог: делает Dylan Blue более универсальным "
+                "по гендеру, но не оригинальнее"
+            ),
+        ],
+    },
 }
+
 
 def get_brand(row):
     if "brand" in row.index.str.lower():
@@ -122,7 +188,9 @@ def get_name(row):
 # Загрузка базы
 def load_base():
     console.print("\n[bold]Выбери базу парфюмов:[/bold]")
-    base_choice = Prompt.ask("1 — Моя маленькая база (для теста)\n2 — Большая база Fragrantica (тысячи ароматов)", choices=["1", "2"], default="1")
+    base_choice = Prompt.ask("1 — Моя маленькая база (для теста)"
+                             "\n2 — Большая база Fragrantica (тысячи ароматов)"
+                             , choices=["1", "2"], default="1")
 
     if base_choice == "2":
         filepath = "fra_perfumes.csv"  # имя твоего скачанного файла
@@ -208,6 +276,34 @@ def display_search_results(results: pd.DataFrame):
     console.print(table)
     return results
 
+def guess_season(accords: str, description: str = "") -> str:
+    """
+    Возвращает предполагаемый лучший сезон аромата.
+    Возвращает: 'summer', 'winter', 'fall', 'spring', 'all'
+    """
+    text = (accords or "" + " " + description or "").lower()
+    
+    # Летние/свежие (очень сильные индикаторы)
+    summer_indicators = ["citrus", "fresh", "aquatic", "marine", "green", "lavender", "bergamot", "lemon", "mint", "summer", "beach", "light", "bright"]
+    if any(w in text for w in summer_indicators):
+        return "summer"
+    
+    # Зимние/тёплые (очень сильные индикаторы)
+    winter_indicators = ["vanilla", "amber", "tonka", "gourmand", "cinnamon", "spice", "tobacco", "leather", "oud", "patchouli", "incense", "warm", "winter", "cozy", "heavy"]
+    if any(w in text for w in winter_indicators):
+        return "winter"
+    
+    # Осенние/древесные
+    fall_indicators = ["woody", "cedar", "sandalwood", "vetiver", "mossy", "dry woods", "fall", "autumn"]
+    if any(w in text for w in fall_indicators):
+        return "fall"
+    
+    # Весенние/цветочные (если ничего другого не подошло)
+    spring_indicators = ["floral", "rose", "jasmine", "lily", "tuberose", "spring"]
+    if any(w in text for w in spring_indicators):
+        return "spring"
+    
+    return "all"  # универсальный, если ничего не определилось
 
 # Анализ лееринга с поддержкой пресетов
 def analyze_layering(perfumes):
@@ -231,43 +327,13 @@ def analyze_layering(perfumes):
         notes_all += " " + str(p.get("Description", "")).lower()
     notes_all = notes_all.strip()
 
-    # Fragrance Wheel (оставляем как есть)
-    FRAGRANCE_WHEEL = {
-        "floral": ["floral", "soft floral", "floral oriental"],
-        "oriental": ["oriental", "soft oriental", "woody oriental"],
-        "woody": ["woody", "dry woods", "mossy woods"],
-        "fresh": ["fresh", "citrus", "green", "water"]
-    }
-
-    COMPATIBILITY_MATRIX = {
-        "floral": {"floral": 30, "oriental": 20, "woody": 10, "fresh": -10},
-        "oriental": {"oriental": 30, "floral": 20, "woody": 20, "fresh": -10},
-        "woody": {"woody": 30, "oriental": 20, "floral": 10, "fresh": 0},
-        "fresh": {"fresh": 30, "woody": 0, "floral": -10, "oriental": -10}
-    }
-
-    def get_family(accords: str):
-        accords = accords.lower()
-        for family, keywords in FRAGRANCE_WHEEL.items():
-            if any(k in accords for k in keywords):
-                return family
-        return "unknown"
-
-    family_bonus = 0
-    perfume_families = [get_family(p.get("Main Accords", "")) for p in perfumes]
-    if not all(f == "unknown" for f in perfume_families):
-        pairs = [(perfume_families[i], perfume_families[j]) for i in range(len(perfume_families)) for j in range(i+1, len(perfume_families))]
-        for f1, f2 in pairs:
-            if f1 != "unknown" and f2 != "unknown":
-                family_bonus += COMPATIBILITY_MATRIX.get(f1, {}).get(f2, 0)
-        family_bonus = family_bonus // len(pairs) if pairs else 0
-
-    compatibility = 70 + family_bonus
+    compatibility = 0
 
     vibe = "Unique mix — experimental and interesting 🧪"
     risks = []
 
     tips = ["Apply lighter/fresh scent first, heavy on top", "2–3 sprays total to avoid overload"]
+
 
     # Positive правила
     positive_hits = []
@@ -307,10 +373,10 @@ def analyze_layering(perfumes):
     if all_hits:
         # Сортируем по абсолютной силе влияния
         all_hits.sort(key=lambda x: abs(x.get("bonus", 0) + x.get("penalty", 0)), reverse=True)
-            
+
         # Самый сильный вайб
         vibe = all_hits[0]["vibe"]
-            
+
         # Добавляем второй сильный, если есть
         if len(all_hits) > 1 and all_hits[1]["vibe"]:
             vibe += " with " + all_hits[1]["vibe"].lower()
@@ -338,6 +404,33 @@ def analyze_layering(perfumes):
         risks = ["Minimal — should work smoothly!"]
 
     compatibility = max(50, min(100, compatibility + len(perfumes) * 5))
+
+    seasons = []
+    for p in perfumes:
+        acc = p.get("Main Accords", "")
+        desc = p.get("Description", "")
+        s = guess_season(acc, desc)
+        seasons.append(s)
+
+    # Анализируем общий сезон микса
+    unique_seasons = set(seasons)
+    if len(unique_seasons) == 1:
+        common_season = list(unique_seasons)[0]
+        if common_season == "summer":
+            compatibility += 10
+            vibe += "\n[b] Идеально для лета ☀️[/b]"
+        elif common_season == "winter":
+            compatibility += 10
+            vibe += "\n[b] Идеально для зимы ❄️[/b]"
+        elif common_season == "fall":
+            compatibility += 5
+            vibe += "\n[b] Отлично для осени 🍂[/b]"
+        elif common_season == "spring":
+            compatibility += 5
+            vibe += "\n[b] Отлично для весны 🌸[/b]"
+    elif "summer" in unique_seasons and "winter" in unique_seasons:
+        compatibility -= 10
+        vibe += "\n[b] Контраст сезонов, может быть необычно[/b]"
 
     return {
         "compatibility": compatibility,
